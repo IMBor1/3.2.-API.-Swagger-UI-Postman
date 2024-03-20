@@ -1,34 +1,46 @@
 package ru.hogwarts.school.Service;
 
 import org.springframework.stereotype.Service;
-import ru.hogwarts.school.Exceptions.StudentAlreadeCreatedException;
-import ru.hogwarts.school.Exceptions.StudentNotFoundException;
+import ru.hogwarts.school.Exceptions.AlreadeCreatedException;
+import ru.hogwarts.school.Exceptions.MyNotFoundException;
 import ru.hogwarts.school.Model.Student;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
 public class StudentService {
-    Map<Long, Student> studentMap;
-    private long countStudent = 0;
+    Map<Long, Student> studentMap = new HashMap<>();
+    long lastId = 0;
 
     public Student create(Student student) {
         if (studentMap.containsValue(student)) {
-            throw new StudentAlreadeCreatedException();
+            throw new AlreadeCreatedException();
         }
-        Student newStudent = new Student(student.getId(),
-                student.getName(), student.getAge());
-        countStudent++;
-        return newStudent;
+        student.setId(++lastId);
+        studentMap.put(lastId, student);
+        return student;
     }
 
-    public Student find(Student student) {
-        if (!studentMap.containsValue(student)) {
-            throw new StudentNotFoundException();
+    public Student find(long id) {
+        if (!studentMap.containsValue(id)) {
+            throw new MyNotFoundException();
         }
-        Student newStudent = new Student(student.getId(),
-                student.getName(), student.getAge());
-        countStudent++;
-        return newStudent;
+        return studentMap.get(id);
+    }
+
+    public Student editStudent(Student student) {
+        if (!studentMap.containsValue(student)) {
+            throw new MyNotFoundException();
+        }
+        studentMap.put(student.getId(), student);
+        return student;
+    }
+
+    public Student removeStudent(Long id) {
+        if (!studentMap.containsKey(id)) {
+            throw new MyNotFoundException();
+        }
+        return studentMap.remove(id);
     }
 }
