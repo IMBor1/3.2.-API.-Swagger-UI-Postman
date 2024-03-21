@@ -6,14 +6,15 @@ import ru.hogwarts.school.Exceptions.MyNotFoundException;
 import ru.hogwarts.school.Model.Student;
 
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
-    Map<Long, Student> studentMap = new HashMap<>();
-    long lastId = 0;
+    private HashMap<Long, Student> studentMap = new HashMap<>();
+    private long lastId = 0;
 
-    public Student create(Student student) {
+    public Student createStudent(Student student) {
         if (studentMap.containsValue(student)) {
             throw new AlreadeCreatedException();
         }
@@ -22,25 +23,30 @@ public class StudentService {
         return student;
     }
 
-    public Student find(long id) {
-        if (!studentMap.containsValue(id)) {
-            throw new MyNotFoundException();
-        }
+    public Student findStudent(long id) {
         return studentMap.get(id);
+//        if (!studentMap.containsKey(id)) {
+//            throw new MyNotFoundException();
+//        }
     }
 
     public Student editStudent(Student student) {
-        if (!studentMap.containsValue(student)) {
-            throw new MyNotFoundException();
-        }
         studentMap.put(student.getId(), student);
         return student;
     }
 
-    public Student removeStudent(Long id) {
+    public Student removeStudent(long id) {
         if (!studentMap.containsKey(id)) {
             throw new MyNotFoundException();
         }
         return studentMap.remove(id);
     }
+
+    public List<Student> listAge(Integer age) {
+        return studentMap.values().stream()
+                .filter(s -> s.getAge() == age)
+                .collect(Collectors.toList());
+
+    }
+
 }
