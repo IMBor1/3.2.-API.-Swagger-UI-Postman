@@ -20,8 +20,8 @@ public class StudentController {
         return studentService.findStudent(id);
     }
 
-    @GetMapping("{age}")
-    public List<Student> listStudentsByAge(@PathVariable Integer age) {
+    @GetMapping()
+    public List<Student> listStudentsByAge(Integer age) {
         return studentService.listAge(age);
     }
 

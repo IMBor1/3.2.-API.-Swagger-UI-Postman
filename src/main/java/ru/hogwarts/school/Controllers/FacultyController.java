@@ -20,8 +20,8 @@ public class FacultyController {
         return facultyService.createFaculty(faculty);
     }
 
-    @GetMapping("{color}")
-    public List<Faculty> listFacultyByColor(@PathVariable String color) {
+    @GetMapping()
+    public List<Faculty> listFacultyByColor(String color) {
         return facultyService.listColor(color);
     }
 
