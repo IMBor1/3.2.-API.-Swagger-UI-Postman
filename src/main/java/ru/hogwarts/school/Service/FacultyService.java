@@ -32,8 +32,11 @@ public class FacultyService {
     }
 
     public Faculty editFaculty(Faculty faculty) {
-        facultyMap.put(faculty.getId(), faculty);
-        return faculty;
+        if (facultyMap.containsKey(faculty.getId())) {
+            facultyMap.put(faculty.getId(), faculty);
+            return faculty;
+        }
+        return null;
     }
 
     public Faculty removeFaculty(Long id) {
