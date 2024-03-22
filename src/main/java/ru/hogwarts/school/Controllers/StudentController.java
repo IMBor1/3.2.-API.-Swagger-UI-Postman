@@ -26,7 +26,7 @@ public class StudentController {
     }
 
     @GetMapping()
-    public List<Student> listStudentsByAge(Integer age) {
+    public List<Student> listStudentsByAge(@RequestParam Integer age) {
         return studentService.listAge(age);
     }
 
@@ -45,7 +45,8 @@ public class StudentController {
     }
 
     @DeleteMapping("{id}")
-    public Student removeStudent(@PathVariable Long id) {
-        return studentService.removeStudent(id);
+    public ResponseEntity removeStudent(@PathVariable Long id) {
+        studentService.removeStudent(id);
+        return ResponseEntity.ok().build();
     }
 }
