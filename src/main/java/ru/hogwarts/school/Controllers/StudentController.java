@@ -25,7 +25,7 @@ public class StudentController {
         return ResponseEntity.ok(student);
     }
 
-    @GetMapping()
+    @GetMapping("/age")
     public List<Student> listStudentsByAge(@RequestParam Integer age) {
         return studentService.listAge(age);
     }
@@ -35,8 +35,8 @@ public class StudentController {
         return studentService.createStudent(student);
     }
 
-    @PutMapping
-    public ResponseEntity editStudent(@RequestBody Student student) {
+    @PutMapping("/{id}")
+    public ResponseEntity editStudent(@PathVariable Long id, @RequestBody Student student) {
         Student student1 = studentService.editStudent(student);
         if (student1 == null) {
             return ResponseEntity.notFound().build();
