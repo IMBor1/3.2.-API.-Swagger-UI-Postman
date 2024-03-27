@@ -2,6 +2,7 @@ package ru.hogwarts.school.Model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import java.util.Objects;
@@ -9,12 +10,12 @@ import java.util.Objects;
 @Entity
 public class Student {
     @Id
-    @GeneratedValue
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String name;
     private int age;
 
-    public Student(long id, String name, int age) {
+    public Student(Long id, String name, int age) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -24,7 +25,7 @@ public class Student {
 
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

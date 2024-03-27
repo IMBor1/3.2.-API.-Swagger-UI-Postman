@@ -6,15 +6,17 @@ import jakarta.persistence.Id;
 
 import java.util.Objects;
 
+import static jakarta.persistence.GenerationType.IDENTITY;
+
 @Entity
 public class Faculty {
     @Id
-    @GeneratedValue
-    private long id;
+    @GeneratedValue(strategy = IDENTITY)
+    private Long id;
     private String name;
     private String color;
 
-    public Faculty(long id, String name, String color) {
+    public Faculty(Long id, String name, String color) {
         this.id = id;
         this.name = name;
         this.color = color;
@@ -24,7 +26,7 @@ public class Faculty {
 
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
