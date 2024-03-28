@@ -36,4 +36,6 @@ public class FacultyService {
                 .filter(s -> s.getColor().equals(color))
                 .collect(Collectors.toList());
     }
+
+
 }
