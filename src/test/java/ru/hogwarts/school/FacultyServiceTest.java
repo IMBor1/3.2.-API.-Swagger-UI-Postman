@@ -11,6 +11,7 @@ import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -39,17 +40,14 @@ public class FacultyServiceTest {
 
     @Test
     void findFacultyByPostegree() {
-        when(mockRepository.findAll())
-                .thenReturn(faculty);
-        when(mockRepository.findById(1L).get())
-                .thenReturn(faculty1);
+        when(mockRepository.findById(1L))
+                .thenReturn(Optional.ofNullable(faculty1));
         assertEquals(faculty1, facultyService.findFaculty(1L));
     }
 
     @Test
     void editFacultyByPostegree() {
-//        mockRepository.save(new Faculty(1L,
-//                "history", "red"));
+
         when(mockRepository.save(new Faculty(1L,
                 "history", "pink")))
                 .thenReturn(faculty2);
@@ -57,13 +55,6 @@ public class FacultyServiceTest {
                 "history", "pink")));
     }
 
-    //    @Test
-//    void removeFaculty(){
-//            mockRepository.save(new Faculty(1L,
-//                "history", "red"));
-//       // mockRepository.deleteById(1L);
-//        facultyService.removeFaculty(1L);
-//        assertEquals(0, mockRepository.);
     @Test
     void getColor() {
         when(mockRepository.findAll())
