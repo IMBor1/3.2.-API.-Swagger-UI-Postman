@@ -49,4 +49,10 @@ public class StudentController {
         studentService.removeStudent(id);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/ageBetween")
+    public List<Student> findByAgeBetween(@RequestParam int minAge,
+                                          @RequestParam int maxAge) {
+        return studentService.findByAgeBetween(minAge, maxAge);
+    }
 }

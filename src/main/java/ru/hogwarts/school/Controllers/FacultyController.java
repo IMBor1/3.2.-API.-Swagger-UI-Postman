@@ -49,4 +49,16 @@ public class FacultyController {
         facultyService.removeFaculty(id);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/nameOrColor")
+    public ResponseEntity<Faculty> findByNameOrColor(@RequestParam(required = false) String name,
+                                                     @RequestParam(required = false) String color) {
+        if (name != null && !name.isBlank()) {
+            return ResponseEntity.ok(facultyService.findByName(name));
+        }
+        if (color != null && !color.isBlank()) {
+            return ResponseEntity.ok(facultyService.findByColor(color));
+        }
+        return ResponseEntity.ok().build();
+    }
 }
