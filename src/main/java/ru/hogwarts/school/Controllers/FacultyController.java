@@ -57,7 +57,7 @@ public class FacultyController {
             return ResponseEntity.ok(facultyService.findByName(name));
         }
         if (color != null && !color.isBlank()) {
-            return ResponseEntity.ok(facultyService.findByColor(color));
+            return ResponseEntity.ok(facultyService.findByColorIgnoreCase(color));
         }
         return ResponseEntity.ok().build();
     }
