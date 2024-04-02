@@ -15,6 +15,8 @@ public class Student {
     @JoinColumn(name = "faculty_id")
     private Faculty faculty;
 
+    private Avatar avatar;
+
     public Faculty getFaculty() {
         return faculty;
     }
