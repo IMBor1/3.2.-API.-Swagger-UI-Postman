@@ -15,18 +15,9 @@ public class Student {
     @JoinColumn(name = "faculty_id")
     private Faculty faculty;
 
-    private Avatar avatar;
 
     public Faculty getFaculty() {
         return faculty;
-    }
-
-    public Avatar getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(Avatar avatar) {
-        this.avatar = avatar;
     }
 
     public void setFaculty(Faculty faculty) {

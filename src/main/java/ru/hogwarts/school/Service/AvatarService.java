@@ -17,7 +17,7 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 @Service
 @Transactional
 public class AvatarService {
-    @Value("${path.to.users.mm-b.avatars.1}")
+    @Value("${path.to.avatars.folder=c:/users/mm-b/avatars/1}")
     private String avatarsDir;
     private final AvatarRepository avatarRepository;
     private final StudentService studentService;
@@ -55,6 +55,6 @@ public class AvatarService {
     }
 
     public Avatar findAvatar(Long studentId) {
-        return avatarRepository.findStudentId(studentId).orElse(new Avatar());
+        return avatarRepository.findByStudentId(studentId).orElse(new Avatar());
     }
 }

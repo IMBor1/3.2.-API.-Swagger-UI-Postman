@@ -1,6 +1,5 @@
 package ru.hogwarts.school.Model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Arrays;
@@ -17,10 +16,19 @@ public class Avatar {
     @Lob
     private byte[] data;
     @OneToOne
-    @JsonIgnore
+
     private Student student;
 
     public Avatar() {
+    }
+
+    public Avatar(Long id, String filePath, Long fileSize, String mediaType, byte[] data, Student student) {
+        this.id = id;
+        this.filePath = filePath;
+        this.fileSize = fileSize;
+        this.mediaType = mediaType;
+        this.data = data;
+        this.student = student;
     }
 
     public Long getId() {

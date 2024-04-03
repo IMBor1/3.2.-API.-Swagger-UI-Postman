@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @RestController
+@RequestMapping("/avatar")
 public class AvatarController {
     private final AvatarService avatarService;
 
@@ -45,7 +46,7 @@ public class AvatarController {
                                HttpServletResponse response) throws IOException {
         Avatar avatar = avatarService.findAvatar(id);
         Path path = Path.of(avatar.getFilePath());
-        try (InputStream is = Files.newInputStream((java.nio.file.Path) path);
+        try (InputStream is = Files.newInputStream(path);
              OutputStream os = response.getOutputStream();) {
             response.setStatus(200);
             response.setContentType(avatar.getMediaType());
