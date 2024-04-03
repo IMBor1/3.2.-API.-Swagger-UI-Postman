@@ -1,5 +1,6 @@
 package ru.hogwarts.school.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Arrays;
@@ -11,11 +12,12 @@ public class Avatar {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String filePath;
-    private long fileSize;
+    private Long fileSize;
     private String mediaType;
     @Lob
     private byte[] data;
     @OneToOne
+    @JsonIgnore
     private Student student;
 
     public Avatar() {
@@ -74,7 +76,7 @@ public class Avatar {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Avatar avatar = (Avatar) o;
-        return fileSize == avatar.fileSize && Objects.equals(id, avatar.id) && Objects.equals(filePath, avatar.filePath) && Objects.equals(mediaType, avatar.mediaType) && Arrays.equals(data, avatar.data) && Objects.equals(student, avatar.student);
+        return Objects.equals(id, avatar.id) && Objects.equals(filePath, avatar.filePath) && Objects.equals(fileSize, avatar.fileSize) && Objects.equals(mediaType, avatar.mediaType) && Arrays.equals(data, avatar.data) && Objects.equals(student, avatar.student);
     }
 
     @Override
