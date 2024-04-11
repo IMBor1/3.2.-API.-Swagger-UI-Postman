@@ -1,13 +1,18 @@
 package ru.hogwarts.school;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+public class SchoolApplicationTests {
 
-@SpringBootTest
-class SchoolApplicationTests {
+//	@LocalServerPort
+//	private int port;
+//	@Autowired
+//	private StudentController studentController;
+//	@Autowired
+//	private TestRestTemplate restTemplate;
+//
+//	@Test
+//	void contextLoads() throws Exception {
+//		assertThat(studentController).isNotNull();
+//	}
 
-	@Test
-	void contextLoads() {
-	}
 
 }

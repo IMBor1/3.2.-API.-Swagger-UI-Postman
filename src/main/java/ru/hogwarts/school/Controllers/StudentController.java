@@ -25,6 +25,11 @@ public class StudentController {
         return ResponseEntity.ok(student);
     }
 
+    @GetMapping()
+    public List<Student> listStudentsByAge() {
+        return studentService.allStudents();
+    }
+
     @GetMapping("/age")
     public List<Student> listStudentsByAge(@RequestParam Integer age) {
         return studentService.listAge(age);
