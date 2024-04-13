@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import ru.hogwarts.school.Controllers.StudentController;
 import ru.hogwarts.school.Model.Student;
 
@@ -28,13 +30,18 @@ public class StudentControllerTest {
 
     @Test
     void findStudentByIdGetTest() {
-        Student student = new Student();
-        student.setId(1L);
-        student.setAge(22);
-        student.setName("Roy");
-        assertThat(this.restTemplate.getForObject("http://localhost:"
-                + port + "/student/1", Student.class))
-                .isEqualTo(studentController.find(1L));
+        ResponseEntity<Student> newResponseEntity = restTemplate.postForEntity("http://localhost:" +
+                port + "/student", new Student(1L, "Rob", 30), Student.class);
+        assertThat(newResponseEntity.getStatusCode().equals(HttpStatus.OK));
+        Student newStudent = newResponseEntity.getBody();
+
+        ResponseEntity<Student> responseEntity = restTemplate.getForEntity("http://localhost:"
+                + port + "student" + newStudent.getId(), Student.class);
+
+        Student student = responseEntity.getBody();
+        assertThat(student.getId().equals(newStudent.getId()));
+        assertThat(student.getName().equals(newStudent.getName()));
+        assertThat(student.getAge().
     }
 
     @Test
