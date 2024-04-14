@@ -58,7 +58,7 @@ public class StudentControllerTest {
         Student student = responseEntity.getBody();
         assertThat(student.getId().equals(newStudent.getId()));
         assertThat(student.getName().equals(newStudent.getName()));
-        assertThat(student.getName().equals(newStudent.getName()));
+        assertThat(student.getAge() == (newStudent.getAge()));
     }
 
     @Test
@@ -88,6 +88,7 @@ public class StudentControllerTest {
         assertThat(responseEntity.getBody().size() == 3);
 
     }
+
     @Test
     void getStudentsByAgeTest() {
         // ObjectMapper objectMapper = new ObjectMapper();
@@ -144,9 +145,9 @@ public class StudentControllerTest {
         Student student1 = studentController.createStudent(new Student(0L, "ret", 22));
         student1.setFaculty(faculty);
         ResponseEntity<Faculty> responseEntity = restTemplate.getForEntity("http://localhost:"
-                + port + "/student/12/faculty" + student1.getFaculty(), Faculty.class);
+                + port + "/student/id/faculty" + student1.getFaculty(), Faculty.class);
         Faculty faculty1 = responseEntity.getBody();
         assertThat(responseEntity.getStatusCode().is2xxSuccessful());
-        assertThat(faculty1.getName().equals(student1.getFaculty().getName()));
+        assertThat(faculty1.getColor().equals(student1.getFaculty().getColor()));
     }
 }
