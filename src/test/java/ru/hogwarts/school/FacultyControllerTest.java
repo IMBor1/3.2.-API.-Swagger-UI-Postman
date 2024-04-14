@@ -97,5 +97,15 @@ public class FacultyControllerTest {
         assertThat(responseEntity.getStatusCode().equals(HttpStatus.OK));
         assertThat(faculty.equals(faculty1));
     }
-
+//    @Test
+//    void getStudentsByFacultyTest() {
+//
+//        Faculty faculty1 = facultyController.createFaculty(new Faculty(0L, "math", "red"));
+//        Faculty faculty2 = facultyController.createFaculty(new Faculty(5L, "history", "white"));
+//        ResponseEntity<Faculty> responseEntity = restTemplate.getForEntity("http://localhost:"
+//                + port + "/faculty/id/students" + faculty1.getStudents(), Faculty.class);
+//        Faculty faculty1 = responseEntity.getBody();
+//        assertThat(responseEntity.getStatusCode().is2xxSuccessful());
+//        assertThat(faculty1.getColor().equals(Faculty1.getFaculty().getColor()));
+//    }
 }

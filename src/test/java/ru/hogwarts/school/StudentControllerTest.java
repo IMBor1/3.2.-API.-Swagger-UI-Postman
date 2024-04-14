@@ -15,6 +15,7 @@ import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -141,13 +142,14 @@ public class StudentControllerTest {
 
     @Test
     void getFacultyByStudent() {
-
-        Student student1 = studentController.createStudent(new Student(0L, "ret", 22));
+        ResponseEntity<Student> newResponseEntity = restTemplate.postForEntity("http://localhost:" +
+                port + "/student", new Student(2L, "Rob", 30), Student.class);
+        Student student1 = newResponseEntity.getBody();
         student1.setFaculty(faculty);
         ResponseEntity<Faculty> responseEntity = restTemplate.getForEntity("http://localhost:"
-                + port + "/student/id/faculty" + student1.getFaculty(), Faculty.class);
+                + port + "/student/id/faculty" + student1.getId(), Faculty.class);
         Faculty faculty1 = responseEntity.getBody();
         assertThat(responseEntity.getStatusCode().is2xxSuccessful());
-        assertThat(faculty1.getColor().equals(student1.getFaculty().getColor()));
+        assertThat(Objects.equals(faculty1.getName(), student1.getName()));
     }
 }
