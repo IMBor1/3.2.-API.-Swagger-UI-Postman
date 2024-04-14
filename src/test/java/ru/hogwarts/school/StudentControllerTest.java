@@ -1,5 +1,6 @@
 package ru.hogwarts.school;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,6 +9,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import ru.hogwarts.school.Controllers.StudentController;
+import ru.hogwarts.school.Model.Faculty;
 import ru.hogwarts.school.Model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
@@ -28,6 +30,15 @@ public class StudentControllerTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
+    Faculty faculty;
+
+    @BeforeEach
+    void init() {
+        Faculty faculty = new Faculty(1L, "history", "red");
+        ResponseEntity<Faculty> facultyResponseEntity = restTemplate.postForEntity("http://localhost:" +
+                port + "/faculty", faculty, Faculty.class);
+        this.faculty = facultyResponseEntity.getBody();
+    }
 
     @Test
     void contextLoads() throws Exception {
@@ -128,13 +139,14 @@ public class StudentControllerTest {
     }
 
     @Test
-    void getStudentByFaculty() {
-        Student student = new Student();
-        student.setId(3L);
-        student.setAge(22);
-        student.setName("Rak");
-        assertThat(this.restTemplate.getForObject("http://localhost:"
-                + port + "/student/1/faculty", String.class))
-                .isEqualTo(new Student(5L, "tok", 33));
+    void getFacultyByStudent() {
+
+        Student student1 = studentController.createStudent(new Student(0L, "ret", 22));
+        student1.setFaculty(faculty);
+        ResponseEntity<Faculty> responseEntity = restTemplate.getForEntity("http://localhost:"
+                + port + "/student/12/faculty" + student1.getFaculty(), Faculty.class);
+        Faculty faculty1 = responseEntity.getBody();
+        assertThat(responseEntity.getStatusCode().is2xxSuccessful());
+        assertThat(faculty1.getName().equals(student1.getFaculty().getName()));
     }
 }
