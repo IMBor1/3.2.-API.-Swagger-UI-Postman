@@ -26,7 +26,7 @@ public class StudentController {
     }
 
     @GetMapping()
-    public List<Student> listStudentsByAge() {
+    public List<Student> listAllStudents() {
         return studentService.allStudents();
     }
 
