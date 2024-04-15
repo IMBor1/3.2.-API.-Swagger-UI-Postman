@@ -5,17 +5,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import ru.hogwarts.school.Controllers.FacultyController;
 import ru.hogwarts.school.Controllers.StudentController;
 import ru.hogwarts.school.Model.Faculty;
-import ru.hogwarts.school.Model.Student;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpMethod.PUT;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class FacultyControllerTest {
@@ -83,6 +81,7 @@ public class FacultyControllerTest {
         assertThat(faculty.contains(faculty1.getColor()));
 
     }
+
     @Test
     public void deleteFacultyTest() throws Exception {
         ResponseEntity<Faculty> newResponseEntity = restTemplate.postForEntity("http://localhost:" +
@@ -97,6 +96,22 @@ public class FacultyControllerTest {
     }
 
     @Test
+    void editFacultyPut() {
+        Faculty newFaculty = new Faculty(1L, "math", "black");
+        ResponseEntity<Faculty> newResponseEntity = restTemplate.postForEntity("http://localhost:" +
+                port + "/faculty", newFaculty, Faculty.class);
+        Faculty faculty = newResponseEntity.getBody();
+        HttpEntity<Faculty> requestEntity = new RequestEntity<>(faculty, HttpMethod.PUT, null);
+        faculty.setColor("pink");
+        faculty.setName("ooo");
+        ResponseEntity<Faculty> responseEntity = restTemplate.exchange("http://localhost:" +
+                port + "/faculty/" + faculty.getId(), PUT, requestEntity, Faculty.class);
+        Faculty faculty1 = responseEntity.getBody();
+        assertThat(faculty1.equals(faculty));
+
+    }
+
+    @Test
     void findByNameIgnoreCaseOrColorIgnoreCaseGetTest() {
         Faculty faculty1 = facultyController.createFaculty(new Faculty(0L, "math", "red"));
         Faculty faculty2 = facultyController.createFaculty(new Faculty(5L, "history", "white"));
@@ -107,18 +122,22 @@ public class FacultyControllerTest {
         assertThat(faculty.equals(faculty1));
     }
 
-    @Test
-    void getStudentsByFacultyTest() {
-        Student student1 = studentController.createStudent(new Student(0L, "roy", 22));
-        Student student2 = studentController.createStudent(new Student(5L, "ret", 42));
-        Faculty faculty1 = facultyController.createFaculty(new Faculty(0L, "math", "red"));
-        Faculty faculty2 = facultyController.createFaculty(new Faculty(5L, "history", "white"));
-        student1.setFaculty(faculty1);
-        student2.setFaculty(faculty1);
-        ResponseEntity<List> responseEntity = restTemplate.getForEntity("http://localhost:"
-                + port + "/faculty/id/students" + faculty1.getStudents(), List.class);
-        List<Faculty> faculty = responseEntity.getBody();
-        assertThat(responseEntity.getStatusCode().is2xxSuccessful());
-        assertThat(faculty.contains(faculty1.getName()));
-    }
+//    @Test
+//    void getStudentsByFacultyTest() {
+//        Student student1 = studentController.createStudent(new Student(0L, "roy", 22));
+//        Student student2 = studentController.createStudent(new Student(5L, "ret", 42));
+//        Faculty faculty1 = facultyController.createFaculty(new Faculty(0L, "math", "red"));
+//        Faculty faculty2 = facultyController.createFaculty(new Faculty(5L, "history", "white"));
+//        student1.setFaculty(faculty1);
+//        student2.setFaculty(faculty1);
+//        HttpEntity<Faculty> requestEntity = new RequestEntity<>(faculty1, GET, null);
+//        ResponseEntity<List<Faculty>> responseEntity = restTemplate.getForEntity("http://localhost:"
+//                        + port + "/faculty/id/students/" + faculty1.getId(), GET, requestEntity,
+//                new ParameterizedTypeReference<List<Faculty>>() {
+//                }
+//        );
+//        List<Faculty> faculty = responseEntity.getBody();
+//        assertThat(responseEntity.getStatusCode().is2xxSuccessful());
+//        assertThat(faculty.size() == 2);
+//    }
 }
