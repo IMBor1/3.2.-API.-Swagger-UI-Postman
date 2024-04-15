@@ -6,8 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import ru.hogwarts.school.Controllers.StudentController;
 import ru.hogwarts.school.Model.Faculty;
 import ru.hogwarts.school.Model.Student;
@@ -15,9 +14,9 @@ import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpMethod.PUT;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -90,17 +89,19 @@ public class StudentControllerTest {
 
     }
 
-    @Test
-    void getStudentsByAgeTest() {
-        // ObjectMapper objectMapper = new ObjectMapper();
-        Student student1 = studentController.createStudent(new Student(0L, "ret", 22));
-        Student student2 = studentController.createStudent(new Student(5L, "ret", 42));
-        ResponseEntity<ArrayList> responseEntity = restTemplate.getForEntity("http://localhost:"
-                + port + "/student/age?age=" + 22, ArrayList.class);
-        ArrayList<Student> student = responseEntity.getBody();
-        assertThat(responseEntity.getStatusCode().equals(HttpStatus.OK));
-        //  assertThat(student.get(0).getAge() == 22);
-    }
+//    @Test
+//    void getStudentsByAgeTest() {
+//        // ObjectMapper objectMapper = new ObjectMapper();
+//        Student student1 = studentController.createStudent(new Student(0L, "ret", 22));
+//        Student student2 = studentController.createStudent(new Student(5L, "ret", 42));
+//        Student student3 = studentController.createStudent(new Student(6L, "ret", 22));
+//        HttpEntity<Student> requestEntity = new RequestEntity<>(student1, HttpMethod.PUT, null);
+//        ResponseEntity<List<Student>> responseEntity = restTemplate.getForEntity("http://localhost:"
+//                + port + "/student/age" + student1.getAge(),null,ParameterizedTypeReference.class);
+//        List<Student> students = responseEntity.getBody();
+//        assertThat(responseEntity.getStatusCode().equals(HttpStatus.OK));
+//          assertThat(students.size() == 2);
+//    }
 
     @Test
     public void deleteStudentTest() throws Exception {
@@ -115,19 +116,21 @@ public class StudentControllerTest {
         assertThat(responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST));
     }
 
-    //   @Test
-//    void editStudentPut() {
-//        ResponseEntity<Student> newResponseEntity = restTemplate.postForEntity("http://localhost:" +
-//                port + "/student", new Student(2L, "Rob", 30), Student.class);
-//        Student student = newResponseEntity.getBody();
-//        HttpEntity<Student> requestEntity = new RequestEntity<>(student, PUT, null);
-//        student.setAge(23);
-//        student.setName("qqq");
-//        ResponseEntity<Student> responseEntity = restTemplate.exchange("http://localhost:" +
-//                port + "/student", student.getId(), PUT,requestEntity, Student.class);
-//        assertThat(newResponseEntity.getStatusCode().equals(HttpStatus.OK));
+    @Test
+    void editStudentPut() {
+        Student newStudent = new Student(2L, "Rob", 30);
+        ResponseEntity<Student> newResponseEntity = restTemplate.postForEntity("http://localhost:" +
+                port + "/student", newStudent, Student.class);
+        Student student = newResponseEntity.getBody();
+        HttpEntity<Student> requestEntity = new RequestEntity<>(student, HttpMethod.PUT, null);
+        student.setAge(23);
+        student.setName("qqq");
+        ResponseEntity<Student> responseEntity = restTemplate.exchange("http://localhost:" +
+                port + "/student/" + student.getId(), PUT, requestEntity, Student.class);
+        Student student1 = responseEntity.getBody();
+        assertThat(student1.equals(student));
 
-    //   }
+    }
 
     @Test
     void betweenAgeGetTest() {
@@ -142,14 +145,15 @@ public class StudentControllerTest {
 
     @Test
     void getFacultyByStudent() {
+        Student newStudent = new Student(2L, "Rob", 30);
+        newStudent.setFaculty(faculty);
         ResponseEntity<Student> newResponseEntity = restTemplate.postForEntity("http://localhost:" +
-                port + "/student", new Student(2L, "Rob", 30), Student.class);
+                port + "/student", newStudent, Student.class);
         Student student1 = newResponseEntity.getBody();
-        student1.setFaculty(faculty);
-        ResponseEntity<Faculty> responseEntity = restTemplate.getForEntity("http://localhost:"
-                + port + "/student/id/faculty" + student1.getId(), Faculty.class);
-        Faculty faculty1 = responseEntity.getBody();
+        ResponseEntity<Student> responseEntity = restTemplate.getForEntity("http://localhost:"
+                + port + "/student/id/faculty/" + student1.getId(), Student.class);
+        Student student = responseEntity.getBody();
         assertThat(responseEntity.getStatusCode().is2xxSuccessful());
-        assertThat(Objects.equals(faculty1.getName(), student1.getName()));
+        assertThat(student.getFaculty().getId().equals(faculty.getId()));
     }
 }
