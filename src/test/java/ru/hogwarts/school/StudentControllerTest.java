@@ -89,19 +89,7 @@ public class StudentControllerTest {
 
     }
 
-//    @Test
-//    void getStudentsByAgeTest() {
-//        // ObjectMapper objectMapper = new ObjectMapper();
-//        Student student1 = studentController.createStudent(new Student(0L, "ret", 22));
-//        Student student2 = studentController.createStudent(new Student(5L, "ret", 42));
-//        Student student3 = studentController.createStudent(new Student(6L, "ret", 22));
-//        HttpEntity<Student> requestEntity = new RequestEntity<>(student1, HttpMethod.PUT, null);
-//        ResponseEntity<List<Student>> responseEntity = restTemplate.getForEntity("http://localhost:"
-//                + port + "/student/age" + student1.getAge(),null,ParameterizedTypeReference.class);
-//        List<Student> students = responseEntity.getBody();
-//        assertThat(responseEntity.getStatusCode().equals(HttpStatus.OK));
-//          assertThat(students.size() == 2);
-//    }
+
 
     @Test
     public void deleteStudentTest() throws Exception {
@@ -143,6 +131,19 @@ public class StudentControllerTest {
         assertThat(responseEntity.getBody().size() == 1);
     }
 
+    //    @Test
+//    void getStudentsByAgeTest() {
+//        // ObjectMapper objectMapper = new ObjectMapper();
+//        Student student1 = studentController.createStudent(new Student(0L, "ret", 22));
+//        Student student2 = studentController.createStudent(new Student(5L, "ret", 42));
+//        Student student3 = studentController.createStudent(new Student(6L, "ret", 22));
+//        HttpEntity<Student> requestEntity = new RequestEntity<>(student1, HttpMethod.PUT, null);
+//        ResponseEntity<List<Student>> responseEntity = restTemplate.getForEntity("http://localhost:"
+//                + port + "/student/age" + student1.getAge(),null,ParameterizedTypeReference.class);
+//        List<Student> students = responseEntity.getBody();
+//        assertThat(responseEntity.getStatusCode().equals(HttpStatus.OK));
+//          assertThat(students.size() == 2);
+//    }
     @Test
     void getFacultyByStudent() {
         Student newStudent = new Student(2L, "Rob", 30);
