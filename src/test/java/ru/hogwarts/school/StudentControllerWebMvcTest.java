@@ -144,6 +144,28 @@ public class StudentControllerWebMvcTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-        //     .andExpect(jsonPath("$").isArray());
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].name").value(name));
+
+    }
+
+    @Test
+    void betweenAgeGetTest() throws Exception {
+        Long id = 1L;
+        String name = "Roy";
+        int age = 22;
+        JSONObject studentObject = new JSONObject();
+        studentObject.put("name", name);
+        Student student = new Student(id, name, age);
+        when(studentRepository.save(any(Student.class))).thenReturn(student);
+        when(studentRepository.findByAgeBetween(1, 5)).thenReturn(List.of(student));
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student/ageBetween")
+                        //.content(studentObject.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray());
+        //.andExpect(jsonPath("$[0].age").value(age));
     }
 }
