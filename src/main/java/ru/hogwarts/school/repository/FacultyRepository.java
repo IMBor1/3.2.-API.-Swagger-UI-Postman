@@ -3,8 +3,10 @@ package ru.hogwarts.school.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.hogwarts.school.Model.Faculty;
 
+import java.util.List;
+
 public interface FacultyRepository extends JpaRepository<Faculty, Long> {
 
-    Faculty findByNameIgnoreCaseOrColorIgnoreCase(String name, String color);
+    List<Faculty> findAllByNameIgnoreCaseOrColorIgnoreCase(String name, String color);
 }
 

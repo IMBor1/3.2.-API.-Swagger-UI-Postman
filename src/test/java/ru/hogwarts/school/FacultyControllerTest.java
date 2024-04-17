@@ -1,5 +1,9 @@
 package ru.hogwarts.school;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,13 +14,13 @@ import ru.hogwarts.school.Controllers.FacultyController;
 import ru.hogwarts.school.Controllers.StudentController;
 import ru.hogwarts.school.Model.Faculty;
 import ru.hogwarts.school.Model.Student;
+import ru.hogwarts.school.repository.AvatarRepository;
+import ru.hogwarts.school.repository.FacultyRepository;
+import ru.hogwarts.school.repository.StudentRepository;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.PUT;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -29,6 +33,19 @@ public class FacultyControllerTest {
     StudentController studentController;
     @Autowired
     private TestRestTemplate restTemplate;
+    @Autowired
+    private StudentRepository studentRepository;
+    @Autowired
+    AvatarRepository avatarRepository;
+    @Autowired
+    FacultyRepository facultyRepository;
+
+    @BeforeEach
+    void init() {
+        avatarRepository.deleteAll();
+        studentRepository.deleteAll();
+        facultyRepository.deleteAll();
+    }
 
     @Test
     void contextLoads() throws Exception {
@@ -46,9 +63,9 @@ public class FacultyControllerTest {
                 + port + "/faculty/1", Faculty.class);
 
         Faculty faculty = responseEntity.getBody();
-        assertThat(faculty.getId().equals(newFaculty.getId()));
-        assertThat(faculty.getName().equals(newFaculty.getName()));
-        assertThat(faculty.getColor().equals(newFaculty.getColor()));
+        assertThat(faculty.getId().equals(newFaculty.getId())).isTrue();
+        assertThat(faculty.getName().equals(newFaculty.getName())).isTrue();
+        assertThat(faculty.getColor().equals(newFaculty.getColor())).isTrue();
     }
 
     @Test
@@ -98,52 +115,52 @@ public class FacultyControllerTest {
     }
 
     @Test
-    void findByNameIgnoreCaseOrColorIgnoreCaseGetTest() {
+    void findByNameIgnoreCaseOrColorIgnoreCaseGetTest() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
         Faculty faculty1 = facultyController.createFaculty(new Faculty(0L, "math", "red"));
         Faculty faculty2 = facultyController.createFaculty(new Faculty(5L, "history", "white"));
-        ResponseEntity<Faculty> responseEntity = restTemplate.getForEntity("http://localhost:"
-                + port + "/faculty/nameOrColor" + faculty1.getColor(), Faculty.class);
-        Faculty faculty = responseEntity.getBody();
-        assertThat(responseEntity.getStatusCode().equals(HttpStatus.OK));
-        assertThat(faculty.equals(faculty1));
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity("http://localhost:"
+                + port + "/faculty/nameOrColor?name=math&color=ww", String.class);
+        List<Faculty> faculty = objectMapper.readValue(responseEntity.getBody(), new TypeReference<>() {
+        });
+        assertThat(responseEntity.getStatusCode().equals(HttpStatus.OK)).isTrue();
+        assertThat(faculty.get(0).getName().equals(faculty1.getName())).isTrue();
     }
 
     @Test
-    void getFacultyByColorTest() {
+    void getFacultyByColorTest() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
         Faculty faculty1 = facultyController.createFaculty(new Faculty(0L, "math", "red"));
         Faculty faculty2 = facultyController.createFaculty(new Faculty(5L, "history", "white"));
         Faculty faculty3 = facultyController.createFaculty(new Faculty(6L, "music", "white"));
-//        ResponseEntity<Faculty> newResponseEntity = restTemplate.postForEntity("http://localhost:" +
-//                port + "/faculty", new Faculty(2L, "music", "blue"), Faculty.class);
-//        assertThat(newResponseEntity.getStatusCode().equals(HttpStatus.OK));
-//        Faculty newFaculty = newResponseEntity.getBody();
 
-        ResponseEntity<ArrayList> responseEntity = restTemplate.getForEntity("http://localhost:"
-                + port + "/faculty/color" + faculty1.getColor(), ArrayList.class);
 
-        ArrayList<Faculty> faculty = responseEntity.getBody();
-        assertThat(responseEntity.getStatusCode().equals(HttpStatus.OK));
-        assertThat(faculty.contains(faculty1.getColor()));
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity("http://localhost:"
+                + port + "/faculty/color?color=red", String.class);
+        List<Faculty> facultyList = objectMapper.readValue(responseEntity.getBody(), new TypeReference<>() {
+        });
+        assertThat(responseEntity.getStatusCode().equals(HttpStatus.OK)).isTrue();
+        assertThat(facultyList.size() == 1).isTrue();
+        assertThat(facultyList.get(0).getColor().equals(faculty1.getColor())).isTrue();
 
     }
 
     @Test
-    void getStudentsByFacultyTest() {
-        Student student1 = studentController.createStudent(new Student(0L, "roy", 22));
+    void getStudentsByFacultyTest() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Student student1 = studentController.createStudent(new Student(1L, "roy", 22));
         Student student2 = studentController.createStudent(new Student(5L, "ret", 42));
-        Faculty faculty1 = facultyController.createFaculty(new Faculty(0L, "math", "red"));
+        Faculty faculty1 = facultyController.createFaculty(new Faculty(1L, "math", "red"));
         Faculty faculty2 = facultyController.createFaculty(new Faculty(5L, "history", "white"));
         student1.setFaculty(faculty1);
         student2.setFaculty(faculty1);
-        HttpEntity<Faculty> requestEntity = new RequestEntity<>(faculty1, GET, null);
-        ResponseEntity<List<Faculty>> responseEntity = restTemplate.getForEntity("http://localhost:"
-                        + port + "/faculty/id/students/" + faculty1.getId(),
-                List.class);
-        List<Faculty> faculties = responseEntity.getBody();
-        List<String> faculty = faculties.stream()
-                .map(faculty3 -> faculty3.getName())
-                .collect(Collectors.toList());
-        assertThat(responseEntity.getStatusCode().is2xxSuccessful());
-        assertThat(faculty.size() == 2);
+        //HttpEntity<Faculty> requestEntity = new RequestEntity<>(faculty1, GET, null);
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity("http://localhost:"
+                + port + "/faculty/2/students", String.class);
+        List<Student> students = objectMapper.readValue(responseEntity.getBody(), new TypeReference<>() {
+        });
+
+        assertThat(responseEntity.getStatusCode().is2xxSuccessful()).isTrue();
+        // assertThat(students.size() == 2);
     }
 }

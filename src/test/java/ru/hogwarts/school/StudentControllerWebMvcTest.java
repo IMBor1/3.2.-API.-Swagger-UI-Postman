@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.hogwarts.school.Controllers.StudentController;
+import ru.hogwarts.school.Model.Faculty;
 import ru.hogwarts.school.Model.Student;
 import ru.hogwarts.school.Service.AvatarService;
 import ru.hogwarts.school.Service.FacultyService;
@@ -160,12 +161,56 @@ public class StudentControllerWebMvcTest {
         when(studentRepository.save(any(Student.class))).thenReturn(student);
         when(studentRepository.findByAgeBetween(1, 5)).thenReturn(List.of(student));
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/student/ageBetween")
+                        .get("/student/ageBetween?minAge=1&maxAge=5")
                         //.content(studentObject.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray());
-        //.andExpect(jsonPath("$[0].age").value(age));
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].age").value(age));
+    }
+
+    @Test
+    void findByAgeGetTest() throws Exception {
+        Long id = 1L;
+        String name = "Roy";
+        int age = 22;
+        JSONObject studentObject = new JSONObject();
+        studentObject.put("name", name);
+        studentObject.put("age", age);
+        Student student = new Student(id, name, age);
+        when(studentRepository.save(any(Student.class))).thenReturn(student);
+        when(studentRepository.findAll()).thenReturn(List.of(student));
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student/age?age=22")
+                        .content(studentObject.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].age").value(age));
+    }
+
+    @Test
+    void findFacultyByStudentGetTest() throws Exception {
+        Long id = 1L;
+        String name = "Roy";
+        int age = 22;
+        Faculty faculty = new Faculty(null, "math", "red");
+        JSONObject studentObject = new JSONObject();
+        studentObject.put("name", name);
+        studentObject.put("age", age);
+        Student student = new Student(id, name, age);
+        student.setFaculty(faculty);
+        when(studentRepository.save(any(Student.class))).thenReturn(student);
+        when(studentRepository.findById(any())).thenReturn(Optional.of(student));
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student/1/faculty")
+                        .content(studentObject.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("math"))
+                .andExpect(jsonPath("$.color").value("red"));
     }
 }

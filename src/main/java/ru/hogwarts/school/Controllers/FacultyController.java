@@ -52,7 +52,7 @@ public class FacultyController {
     }
 
     @GetMapping("/nameOrColor")
-    public ResponseEntity<Faculty> findByNameIgnoreCaseOrColorIgnoreCase(
+    public ResponseEntity<List<Faculty>> findByNameIgnoreCaseOrColorIgnoreCase(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String color) {
         if ((name != null && !name.isBlank()) && (color != null && !color.isBlank())) {
@@ -63,7 +63,7 @@ public class FacultyController {
     }
 
     @GetMapping("/{id}/students")
-    public ResponseEntity<Collection> getFacultyByStudent(@PathVariable Long id) {
+    public ResponseEntity<Collection> getStudentsByFaculty(@PathVariable Long id) {
         Faculty faculty = facultyService.findFaculty(id);
         if (faculty == null) {
             return ResponseEntity.notFound().build();

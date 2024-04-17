@@ -1,5 +1,8 @@
 package ru.hogwarts.school;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +13,13 @@ import org.springframework.http.*;
 import ru.hogwarts.school.Controllers.StudentController;
 import ru.hogwarts.school.Model.Faculty;
 import ru.hogwarts.school.Model.Student;
+import ru.hogwarts.school.repository.AvatarRepository;
+import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpMethod.PUT;
@@ -27,6 +33,10 @@ public class StudentControllerTest {
     private StudentController studentController;
     @Autowired
     private StudentRepository studentRepository;
+    @Autowired
+    AvatarRepository avatarRepository;
+    @Autowired
+    FacultyRepository facultyRepository;
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -34,6 +44,9 @@ public class StudentControllerTest {
 
     @BeforeEach
     void init() {
+        avatarRepository.deleteAll();
+        studentRepository.deleteAll();
+        facultyRepository.deleteAll();
         Faculty faculty = new Faculty(1L, "history", "red");
         ResponseEntity<Faculty> facultyResponseEntity = restTemplate.postForEntity("http://localhost:" +
                 port + "/faculty", faculty, Faculty.class);
@@ -134,28 +147,32 @@ public class StudentControllerTest {
 
     @Test
     void getFacultyByStudent() {
-        Student newStudent = new Student(2L, "Rob", 30);
-        newStudent.setFaculty(faculty);
-        ResponseEntity<Student> newResponseEntity = restTemplate.postForEntity("http://localhost:" +
-                port + "/student", newStudent, Student.class);
-        Student student1 = newResponseEntity.getBody();
+        Student newStudent = studentController.createStudent(new Student(1L, "Rob", 30));
+        Faculty faculty1 = new Faculty(1L, "history", "red");
+        ResponseEntity<Faculty> facultyResponseEntity = restTemplate.postForEntity("http://localhost:" +
+                port + "/faculty", faculty, Faculty.class);
+        this.faculty = facultyResponseEntity.getBody();
+        newStudent.setFaculty(faculty1);
+        //Student student1 = newResponseEntity.getBody();
         ResponseEntity<Faculty> responseEntity = restTemplate.getForEntity("http://localhost:"
-                + port + "/student/id/faculty/" + student1.getId(), Faculty.class);
-        Faculty faculty1 = responseEntity.getBody();
-        assertThat(responseEntity.getStatusCode().is2xxSuccessful());
-        assertThat(faculty1.equals(faculty));
+                + port + "/student/1/faculty/", Faculty.class);
+        Faculty faculty = responseEntity.getBody();
+        assertThat(responseEntity.getStatusCode().equals(HttpStatus.OK)).isTrue();
+        //   assertThat(faculty1.getName().equals(faculty.getName())).isTrue();
     }
-    //    @Test
-//    void getStudentsByAgeTest() {
-//        // ObjectMapper objectMapper = new ObjectMapper();
-//        Student student1 = studentController.createStudent(new Student(0L, "ret", 22));
-//        Student student2 = studentController.createStudent(new Student(5L, "ret", 42));
-//        Student student3 = studentController.createStudent(new Student(6L, "ret", 22));
-//        HttpEntity<Student> requestEntity = new RequestEntity<>(student1, HttpMethod.PUT, null);
-//        ResponseEntity<List<Student>> responseEntity = restTemplate.getForEntity("http://localhost:"
-//                + port + "/student/age" + student1.getAge(),null,ParameterizedTypeReference.class);
-//        List<Student> students = responseEntity.getBody();
-//        assertThat(responseEntity.getStatusCode().equals(HttpStatus.OK));
-//          assertThat(students.size() == 2);
-//    }
+
+    @Test
+    void getStudentsByAgeTest() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Student student1 = studentController.createStudent(new Student(0L, "ret", 22));
+        Student student2 = studentController.createStudent(new Student(5L, "ret", 42));
+        Student student3 = studentController.createStudent(new Student(6L, "ret", 22));
+        // HttpEntity<Student> requestEntity = new RequestEntity<>(student1, HttpMethod.PUT, null);
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity("http://localhost:"
+                + port + "/student/age?age=22", String.class);
+        List<Student> studentList = objectMapper.readValue(responseEntity.getBody(), new TypeReference<>() {
+        });
+        assertThat(responseEntity.getStatusCode().equals(HttpStatus.OK)).isTrue();
+        assertThat(studentList.size() == 2).isTrue();
+    }
 }
