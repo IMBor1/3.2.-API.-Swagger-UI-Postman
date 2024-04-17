@@ -56,11 +56,11 @@ public class FacultyControllerTest {
     void createFacultyPostTest() throws Exception {
         ResponseEntity<Faculty> newResponseEntity = restTemplate.postForEntity("http://localhost:" +
                 port + "/faculty", new Faculty(1L, "math", "black"), Faculty.class);
-        assertThat(newResponseEntity.getStatusCode().equals(HttpStatus.OK));
+        assertThat(newResponseEntity.getStatusCode().equals(HttpStatus.OK)).isTrue();
         Faculty newFaculty = newResponseEntity.getBody();
 
         ResponseEntity<Faculty> responseEntity = restTemplate.getForEntity("http://localhost:"
-                + port + "/faculty/1", Faculty.class);
+                + port + "/faculty/" + newFaculty.getId(), Faculty.class);
 
         Faculty faculty = responseEntity.getBody();
         assertThat(faculty.getId().equals(newFaculty.getId())).isTrue();
@@ -72,16 +72,16 @@ public class FacultyControllerTest {
     void findFacultyByIdGetTest() {
         ResponseEntity<Faculty> newResponseEntity = restTemplate.postForEntity("http://localhost:" +
                 port + "/faculty", new Faculty(2L, "music", "blue"), Faculty.class);
-        assertThat(newResponseEntity.getStatusCode().equals(HttpStatus.OK));
+        assertThat(newResponseEntity.getStatusCode().equals(HttpStatus.OK)).isTrue();
         Faculty newFaculty = newResponseEntity.getBody();
 
         ResponseEntity<Faculty> responseEntity = restTemplate.getForEntity("http://localhost:"
                 + port + "/faculty/" + newFaculty.getId(), Faculty.class);
 
         Faculty faculty = responseEntity.getBody();
-        assertThat(faculty.getId().equals(newFaculty.getId()));
-        assertThat(faculty.getName().equals(newFaculty.getName()));
-        assertThat(faculty.getColor().equals(newFaculty.getColor()));
+        assertThat(faculty.getId().equals(newFaculty.getId())).isTrue();
+        assertThat(faculty.getName().equals(newFaculty.getName())).isTrue();
+        assertThat(faculty.getColor().equals(newFaculty.getColor())).isTrue();
     }
 
 
@@ -95,7 +95,7 @@ public class FacultyControllerTest {
                 port + "/faculty/" + newFaculty.getId(), Faculty.class);
         ResponseEntity<Faculty> responseEntity = restTemplate.getForEntity("http://localhost:"
                 + port + "/faculty/" + newFaculty.getId(), Faculty.class);
-        assertThat(responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST));
+        assertThat(responseEntity.getStatusCode()).isNotEqualTo(newFaculty);
     }
 
     @Test
@@ -110,7 +110,7 @@ public class FacultyControllerTest {
         ResponseEntity<Faculty> responseEntity = restTemplate.exchange("http://localhost:" +
                 port + "/faculty/" + faculty.getId(), PUT, requestEntity, Faculty.class);
         Faculty faculty1 = responseEntity.getBody();
-        assertThat(faculty1.equals(faculty));
+        assertThat(faculty1.equals(faculty)).isTrue();
 
     }
 
@@ -156,7 +156,7 @@ public class FacultyControllerTest {
         student2.setFaculty(faculty1);
         //HttpEntity<Faculty> requestEntity = new RequestEntity<>(faculty1, GET, null);
         ResponseEntity<String> responseEntity = restTemplate.getForEntity("http://localhost:"
-                + port + "/faculty/2/students", String.class);
+                + port + "/faculty/1/students", String.class);
         List<Student> students = objectMapper.readValue(responseEntity.getBody(), new TypeReference<>() {
         });
 

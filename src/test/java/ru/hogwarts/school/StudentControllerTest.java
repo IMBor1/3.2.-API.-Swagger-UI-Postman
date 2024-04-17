@@ -154,9 +154,9 @@ public class StudentControllerTest {
     void getFacultyByStudent() {
         Student newStudent = studentController.createStudent(new Student(1L, "Rob", 30));
         Faculty faculty1 = new Faculty(1L, "history", "red");
-        ResponseEntity<Faculty> facultyResponseEntity = restTemplate.postForEntity("http://localhost:" +
-                port + "/faculty", faculty, Faculty.class);
-        this.faculty = facultyResponseEntity.getBody();
+//        ResponseEntity<Faculty> facultyResponseEntity = restTemplate.postForEntity("http://localhost:" +
+//                port + "/faculty", faculty, Faculty.class);
+//        this.faculty = facultyResponseEntity.getBody();
         newStudent.setFaculty(faculty1);
         //Student student1 = newResponseEntity.getBody();
         ResponseEntity<Faculty> responseEntity = restTemplate.getForEntity("http://localhost:"
