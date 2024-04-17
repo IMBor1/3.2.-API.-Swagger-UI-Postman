@@ -9,10 +9,14 @@ import org.springframework.http.*;
 import ru.hogwarts.school.Controllers.FacultyController;
 import ru.hogwarts.school.Controllers.StudentController;
 import ru.hogwarts.school.Model.Faculty;
+import ru.hogwarts.school.Model.Student;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.PUT;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -123,23 +127,23 @@ public class FacultyControllerTest {
 
     }
 
-//    @Test
-//    void getStudentsByFacultyTest() {
-//        Student student1 = studentController.createStudent(new Student(0L, "roy", 22));
-//        Student student2 = studentController.createStudent(new Student(5L, "ret", 42));
-//        Faculty faculty1 = facultyController.createFaculty(new Faculty(0L, "math", "red"));
-//        Faculty faculty2 = facultyController.createFaculty(new Faculty(5L, "history", "white"));
-//        student1.setFaculty(faculty1);
-//        student2.setFaculty(faculty1);
-//        HttpEntity<Faculty> requestEntity = new RequestEntity<>(faculty1, GET, null);
-//        ResponseEntity<List<Faculty>> responseEntity = restTemplate.getForEntity("http://localhost:"
-//                + port + "/faculty/id/students/" +faculty1.getId(),
-//                List.class);
-//        List<Faculty> faculties = responseEntity.getBody();
-//        List<String> faculty = faculties.stream()
-//                .map(faculty3 -> faculty3.getName())
-//                .collect(Collectors.toList());
-//        assertThat(responseEntity.getStatusCode().is2xxSuccessful());
-//        assertThat(faculty.size() == 2);
-//    }
+    @Test
+    void getStudentsByFacultyTest() {
+        Student student1 = studentController.createStudent(new Student(0L, "roy", 22));
+        Student student2 = studentController.createStudent(new Student(5L, "ret", 42));
+        Faculty faculty1 = facultyController.createFaculty(new Faculty(0L, "math", "red"));
+        Faculty faculty2 = facultyController.createFaculty(new Faculty(5L, "history", "white"));
+        student1.setFaculty(faculty1);
+        student2.setFaculty(faculty1);
+        HttpEntity<Faculty> requestEntity = new RequestEntity<>(faculty1, GET, null);
+        ResponseEntity<List<Faculty>> responseEntity = restTemplate.getForEntity("http://localhost:"
+                        + port + "/faculty/id/students/" + faculty1.getId(),
+                List.class);
+        List<Faculty> faculties = responseEntity.getBody();
+        List<String> faculty = faculties.stream()
+                .map(faculty3 -> faculty3.getName())
+                .collect(Collectors.toList());
+        assertThat(responseEntity.getStatusCode().is2xxSuccessful());
+        assertThat(faculty.size() == 2);
+    }
 }

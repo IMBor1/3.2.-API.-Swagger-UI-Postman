@@ -131,6 +131,20 @@ public class StudentControllerTest {
         assertThat(responseEntity.getBody().size() == 1);
     }
 
+
+    @Test
+    void getFacultyByStudent() {
+        Student newStudent = new Student(2L, "Rob", 30);
+        newStudent.setFaculty(faculty);
+        ResponseEntity<Student> newResponseEntity = restTemplate.postForEntity("http://localhost:" +
+                port + "/student", newStudent, Student.class);
+        Student student1 = newResponseEntity.getBody();
+        ResponseEntity<Faculty> responseEntity = restTemplate.getForEntity("http://localhost:"
+                + port + "/student/id/faculty/" + student1.getId(), Faculty.class);
+        Faculty faculty1 = responseEntity.getBody();
+        assertThat(responseEntity.getStatusCode().is2xxSuccessful());
+        assertThat(faculty1.equals(faculty));
+    }
     //    @Test
 //    void getStudentsByAgeTest() {
 //        // ObjectMapper objectMapper = new ObjectMapper();
@@ -144,17 +158,4 @@ public class StudentControllerTest {
 //        assertThat(responseEntity.getStatusCode().equals(HttpStatus.OK));
 //          assertThat(students.size() == 2);
 //    }
-    @Test
-    void getFacultyByStudent() {
-        Student newStudent = new Student(2L, "Rob", 30);
-        newStudent.setFaculty(faculty);
-        ResponseEntity<Student> newResponseEntity = restTemplate.postForEntity("http://localhost:" +
-                port + "/student", newStudent, Student.class);
-        Student student1 = newResponseEntity.getBody();
-        ResponseEntity<Student> responseEntity = restTemplate.getForEntity("http://localhost:"
-                + port + "/student/id/faculty/" + student1.getId(), Student.class);
-        Student student = responseEntity.getBody();
-        assertThat(responseEntity.getStatusCode().is2xxSuccessful());
-        assertThat(student.getFaculty().getId().equals(faculty.getId()));
-    }
 }
