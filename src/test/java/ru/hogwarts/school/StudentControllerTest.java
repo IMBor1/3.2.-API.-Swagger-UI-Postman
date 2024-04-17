@@ -17,7 +17,6 @@ import ru.hogwarts.school.repository.AvatarRepository;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -62,43 +61,46 @@ public class StudentControllerTest {
     void findStudentByIdGetTest() {
         ResponseEntity<Student> newResponseEntity = restTemplate.postForEntity("http://localhost:" +
                 port + "/student", new Student(2L, "Rob", 30), Student.class);
-        assertThat(newResponseEntity.getStatusCode().equals(HttpStatus.OK));
+        assertThat(newResponseEntity.getStatusCode().equals(HttpStatus.OK)).isTrue();
         Student newStudent = newResponseEntity.getBody();
 
         ResponseEntity<Student> responseEntity = restTemplate.getForEntity("http://localhost:"
                 + port + "/student/" + newStudent.getId(), Student.class);
 
         Student student = responseEntity.getBody();
-        assertThat(student.getId().equals(newStudent.getId()));
-        assertThat(student.getName().equals(newStudent.getName()));
-        assertThat(student.getAge() == (newStudent.getAge()));
+        assertThat(student.getId().equals(newStudent.getId())).isTrue();
+        assertThat(student.getName().equals(newStudent.getName())).isTrue();
+        assertThat(student.getAge() == (newStudent.getAge())).isTrue();
     }
 
     @Test
     void createPostTest() throws Exception {
         ResponseEntity<Student> newResponseEntity = restTemplate.postForEntity("http://localhost:" +
                 port + "/student", new Student(3L, "Rob", 31), Student.class);
-        assertThat(newResponseEntity.getStatusCode().equals(HttpStatus.OK));
+        assertThat(newResponseEntity.getStatusCode().equals(HttpStatus.OK)).isTrue();
         Student newStudent = newResponseEntity.getBody();
 
         ResponseEntity<Student> responseEntity = restTemplate.getForEntity("http://localhost:"
-                + port + "/student/3", Student.class);
+                + port + "/student/" + newStudent.getId(), Student.class);
 
         Student student = responseEntity.getBody();
-        assertThat(student.getId().equals(newStudent.getId()));
-        assertThat(student.getName().equals(newStudent.getName()));
-        assertThat(student.getAge() == (newStudent.getAge()));
+        assertThat(student.getId().equals(newStudent.getId())).isTrue();
+        assertThat(student.getName().equals(newStudent.getName())).isTrue();
+        assertThat(student.getAge() == (newStudent.getAge())).isTrue();
     }
 
     @Test
-    void getAllStudentsTest() {
+    void getAllStudentsTest() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
         Student student1 = studentController.createStudent(new Student(4L, "ret", 22));
         Student student2 = studentController.createStudent(new Student(5L, "reto", 23));
         Student student3 = studentController.createStudent(new Student(6L, "reta", 22));
-        ResponseEntity<ArrayList> responseEntity = restTemplate.getForEntity("http://localhost:"
-                + port + "/student", ArrayList.class);
-        assertThat(responseEntity.getStatusCode().equals(HttpStatus.OK));
-        assertThat(responseEntity.getBody().size() == 3);
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity("http://localhost:"
+                + port + "/student", String.class);
+        List<Student> students = objectMapper.readValue(responseEntity.getBody(), new TypeReference<>() {
+        });
+        assertThat(responseEntity.getStatusCode().equals(HttpStatus.OK)).isTrue();
+        assertThat(students.size() == 3).isTrue();
 
     }
 
@@ -108,13 +110,13 @@ public class StudentControllerTest {
     public void deleteStudentTest() throws Exception {
         ResponseEntity<Student> newResponseEntity = restTemplate.postForEntity("http://localhost:" +
                 port + "/student", new Student(2L, "Rob", 30), Student.class);
-        assertThat(newResponseEntity.getStatusCode().equals(HttpStatus.OK));
+        assertThat(newResponseEntity.getStatusCode().equals(HttpStatus.OK)).isTrue();
         Student newStudent = newResponseEntity.getBody();
         restTemplate.delete("http://localhost:" +
                 port + "/student/" + newStudent.getId(), Student.class);
         ResponseEntity<Student> responseEntity = restTemplate.getForEntity("http://localhost:"
                 + port + "/student/" + newStudent.getId(), Student.class);
-        assertThat(responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST));
+        assertThat(responseEntity.getBody()).isNotEqualTo(newStudent);
     }
 
     @Test
