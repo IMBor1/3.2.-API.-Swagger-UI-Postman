@@ -17,7 +17,6 @@ import ru.hogwarts.school.repository.AvatarRepository;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
-import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -131,19 +130,23 @@ public class StudentControllerTest {
         ResponseEntity<Student> responseEntity = restTemplate.exchange("http://localhost:" +
                 port + "/student/" + student.getId(), PUT, requestEntity, Student.class);
         Student student1 = responseEntity.getBody();
-        assertThat(student1.equals(student));
+        assertThat(student1.equals(student)).isTrue();
 
     }
 
     @Test
-    void betweenAgeGetTest() {
+    void betweenAgeGetTest() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
         Student student1 = studentController.createStudent(new Student(0L, "ret", 22));
         Student student2 = studentController.createStudent(new Student(5L, "ret", 42));
         Student student3 = studentController.createStudent(new Student(6L, "ree", 30));
-        ResponseEntity<Collection> responseEntity = restTemplate.getForEntity("http://localhost:"
-                + port + "/student?min=" + 23 + "&max=" + 39, Collection.class);
-        assertThat(responseEntity.getStatusCode().is2xxSuccessful());
-        assertThat(responseEntity.getBody().size() == 1);
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity("http://localhost:"
+                + port + "/student/ageBetween?minAge=25&maxAge=40", String.class);
+        List<Student> studentObject = objectMapper.readValue(responseEntity.getBody(),
+                new TypeReference<>() {
+                });
+        assertThat(responseEntity.getStatusCode().equals(HttpStatus.OK)).isTrue();
+        assertThat(studentObject.size() == 1).isTrue();
     }
 
 
