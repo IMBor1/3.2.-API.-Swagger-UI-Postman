@@ -148,19 +148,19 @@ public class FacultyControllerTest {
     @Test
     void getStudentsByFacultyTest() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        Student student1 = studentController.createStudent(new Student(1L, "roy", 22));
-        Student student2 = studentController.createStudent(new Student(5L, "ret", 42));
-        Faculty faculty1 = facultyController.createFaculty(new Faculty(1L, "math", "red"));
+        Faculty faculty1 = facultyController.createFaculty(new Faculty(3L, "math", "red"));
         Faculty faculty2 = facultyController.createFaculty(new Faculty(5L, "history", "white"));
+        Student student1 = new Student(1L, "roy", 22);
+        Student student2 = new Student(5L, "ret", 42);
         student1.setFaculty(faculty1);
         student2.setFaculty(faculty1);
-        //HttpEntity<Faculty> requestEntity = new RequestEntity<>(faculty1, GET, null);
+        Student studentDB1 = studentController.createStudent(student1);
+        Student studentDB2 = studentController.createStudent(student2);
         ResponseEntity<String> responseEntity = restTemplate.getForEntity("http://localhost:"
-                + port + "/faculty/1/students", String.class);
+                + port + "/faculty/" + faculty1.getId() + "/students", String.class);
         List<Student> students = objectMapper.readValue(responseEntity.getBody(), new TypeReference<>() {
         });
-
         assertThat(responseEntity.getStatusCode().is2xxSuccessful()).isTrue();
-        // assertThat(students.size() == 2);
+        assertThat(students.size() == 2);
     }
 }

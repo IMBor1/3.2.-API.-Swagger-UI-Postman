@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
+import ru.hogwarts.school.Controllers.FacultyController;
 import ru.hogwarts.school.Controllers.StudentController;
 import ru.hogwarts.school.Model.Faculty;
 import ru.hogwarts.school.Model.Student;
@@ -29,6 +30,8 @@ public class StudentControllerTest {
     private int port;
     @Autowired
     private StudentController studentController;
+    @Autowired
+    private FacultyController facultyController;
     @Autowired
     private StudentRepository studentRepository;
     @Autowired
@@ -152,18 +155,15 @@ public class StudentControllerTest {
 
     @Test
     void getFacultyByStudent() {
-        Student newStudent = studentController.createStudent(new Student(1L, "Rob", 30));
-        Faculty faculty1 = new Faculty(1L, "history", "red");
-//        ResponseEntity<Faculty> facultyResponseEntity = restTemplate.postForEntity("http://localhost:" +
-//                port + "/faculty", faculty, Faculty.class);
-//        this.faculty = facultyResponseEntity.getBody();
+        Faculty faculty1 = facultyController.createFaculty(new Faculty(1L, "history", "red"));
+        Student newStudent = new Student(1L, "Rob", 30);
         newStudent.setFaculty(faculty1);
-        //Student student1 = newResponseEntity.getBody();
+        Student studentDb = studentController.createStudent(newStudent);
         ResponseEntity<Faculty> responseEntity = restTemplate.getForEntity("http://localhost:"
-                + port + "/student/1/faculty/", Faculty.class);
+                + port + "/student/" + studentDb.getId() + "/faculty", Faculty.class);
         Faculty faculty = responseEntity.getBody();
         assertThat(responseEntity.getStatusCode().equals(HttpStatus.OK)).isTrue();
-        //   assertThat(faculty1.getName().equals(faculty.getName())).isTrue();
+        assertThat(faculty1.getName().equals(faculty.getName())).isTrue();
     }
 
     @Test
