@@ -1,7 +1,6 @@
 package ru.hogwarts.school.Service;
 
 import org.springframework.stereotype.Service;
-import ru.hogwarts.school.Model.AllStudents;
 import ru.hogwarts.school.Model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
@@ -55,7 +54,7 @@ public class StudentService {
         return studentRepository.getAvgStudents();
     }
 
-    public List<AllStudents> getLastStudents() {
+    public List<Student> getLastStudents() {
         return studentRepository.getLastStudents();
     }
 }

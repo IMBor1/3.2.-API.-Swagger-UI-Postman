@@ -3,7 +3,7 @@ package ru.hogwarts.school.Controllers;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.hogwarts.school.Model.AllStudents;
+import ru.hogwarts.school.Model.Student;
 import ru.hogwarts.school.Service.StudentService;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public class AllStudentsController {
     }
 
     @GetMapping("/last5Id")
-    List<AllStudents> getLastStudents() {
+    List<Student> getLastStudents() {
         return studentService.getLastStudents();
     }
 }
