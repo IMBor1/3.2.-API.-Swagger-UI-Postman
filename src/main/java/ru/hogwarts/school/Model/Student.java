@@ -10,7 +10,7 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private int age;
+    private Integer age;
     @ManyToOne
     @JoinColumn(name = "faculty_id")
     private Faculty faculty;
@@ -28,7 +28,7 @@ public class Student {
 
     }
 
-    public Student(Long id, String name, int age) {
+    public Student(Long id, String name, Integer age) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -42,7 +42,7 @@ public class Student {
         return name;
     }
 
-    public int getAge() {
+    public Integer getAge() {
         return age;
     }
 
@@ -63,12 +63,12 @@ public class Student {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Student student = (Student) o;
-        return age == student.age && Objects.equals(id, student.id) && Objects.equals(name, student.name);
+        return Objects.equals(id, student.id) && Objects.equals(name, student.name) && Objects.equals(age, student.age) && Objects.equals(faculty, student.faculty);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, age);
+        return Objects.hash(id, name, age, faculty);
     }
 
     @Override
