@@ -15,7 +15,11 @@ public class Student {
     @JoinColumn(name = "faculty_id")
     private Faculty faculty;
 
-
+    @PrePersist
+    void preInsert() {
+        if (this.age == null)
+            this.age = 25;
+    }
     public Faculty getFaculty() {
         return faculty;
     }
