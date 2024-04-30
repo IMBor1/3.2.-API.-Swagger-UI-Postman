@@ -20,6 +20,7 @@ public class Avatar {
 
     private Student student;
 
+
     public Avatar() {
     }
 
