@@ -11,6 +11,6 @@ model varchar,
 price Integer);
 
 create table carOwner(
-id serial primary key,
-person_id Integer,
-car_id Integer);
+id_carowner serial,
+person_id Integer references person(id),
+car_id Integer references car(id));
