@@ -2,6 +2,7 @@ package ru.hogwarts.school.Service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.Model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
@@ -69,5 +70,15 @@ public class StudentService {
     public List<Student> getLastStudents() {
         logger.info("Was invoked method for get list last 5 students");
         return studentRepository.getLastStudents();
+    }
+
+    public ResponseEntity<List<String>> namesStartA() {
+        List<String> students = studentRepository.findAll().stream()
+                .filter(s -> s.getName().toUpperCase().startsWith("A"))
+                .map(Student::getName)
+                .sorted()
+                .map(String::toUpperCase)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(students);
     }
 }

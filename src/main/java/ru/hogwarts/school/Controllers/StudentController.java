@@ -84,4 +84,9 @@ public class StudentController {
     List<Student> getLastStudents() {
         return studentService.getLastStudents();
     }
+
+    @GetMapping("/namesStartA")
+    public ResponseEntity<List<String>> namesStartA() {
+        return studentService.namesStartA();
+    }
 }
