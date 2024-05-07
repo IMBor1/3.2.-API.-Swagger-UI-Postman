@@ -15,4 +15,9 @@ public class InfoController {
     public String getNumberPort() {
         return infoService.getPort();
     }
+
+    @GetMapping("/sum")
+    public long sumModdif() {
+        return infoService.sumModdif();
+    }
 }
