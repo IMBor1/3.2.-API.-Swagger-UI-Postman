@@ -81,4 +81,11 @@ public class StudentService {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(students);
     }
+
+    public ResponseEntity<Double> getAverageAge() {
+        double studentsAvAge = studentRepository.findAll().stream()
+                .mapToDouble(Student::getAge).average().orElseThrow();
+        //.collect(Collectors.toList());
+        return ResponseEntity.ok(studentsAvAge);
+    }
 }
