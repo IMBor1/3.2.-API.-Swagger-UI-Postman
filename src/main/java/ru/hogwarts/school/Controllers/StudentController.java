@@ -99,4 +99,9 @@ public class StudentController {
     public List<String> allParallelNames() {
         return studentService.allParallelNames();
     }
+
+    @GetMapping("print-synchronized")
+    public List<String> syncNames() {
+        return studentService.syncNames();
+    }
 }
