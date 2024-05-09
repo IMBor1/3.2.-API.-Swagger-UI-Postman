@@ -94,4 +94,9 @@ public class StudentController {
     public ResponseEntity<Double> getAverageAge() {
         return studentService.getAverageAge();
     }
+
+    @GetMapping("print-parallel")
+    public List<String> allParallelNames() {
+        return studentService.allParallelNames();
+    }
 }

@@ -88,4 +88,16 @@ public class StudentService {
         //.collect(Collectors.toList());
         return ResponseEntity.ok(studentsAvAge);
     }
+
+    public List<String> allParallelNames() {
+        List<String> names = studentRepository.findAll().stream()
+                .parallel()
+                .limit(6)
+                .map(Student::getName)
+                .toList();
+        System.out.println(names.get(0) + " " + names.get(1));
+        new Thread(() -> System.out.println(names.get(2) + " " + names.get(3))).start();
+        new Thread(() -> System.out.println(names.get(4) + " " + names.get(5))).start();
+        return names;
+    }
 }
