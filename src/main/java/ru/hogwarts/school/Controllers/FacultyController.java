@@ -70,4 +70,9 @@ public class FacultyController {
         }
         return ResponseEntity.ok(facultyService.findFaculty(id).getStudents());
     }
+
+    @GetMapping("/maxLengthFaculty")
+    public ResponseEntity<String> maxLengthFaculty() {
+        return facultyService.maxLengthFaculty();
+    }
 }

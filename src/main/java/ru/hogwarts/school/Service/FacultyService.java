@@ -2,11 +2,13 @@ package ru.hogwarts.school.Service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.Exceptions.MyNotFoundException;
 import ru.hogwarts.school.Model.Faculty;
 import ru.hogwarts.school.repository.FacultyRepository;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,4 +53,12 @@ public class FacultyService {
         return facultyRepository.findAllByNameIgnoreCaseOrColorIgnoreCase(name, color);
     }
 
+    public ResponseEntity<String> maxLengthFaculty() {
+        String maxLength = facultyRepository.findAll().stream()
+
+                .map(Faculty::getName)
+                .max(Comparator.comparingInt(String::length)).orElseThrow();
+        //.collect(Collectors.toList());
+        return ResponseEntity.ok(maxLength);
+    }
 }
