@@ -10,6 +10,7 @@ import ru.hogwarts.school.repository.StudentRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @Service
 public class StudentService {
     Logger logger = LoggerFactory.getLogger(StudentService.class);
@@ -18,6 +19,7 @@ public class StudentService {
     public StudentService(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
+
 
     public Student createStudent(Student student) {
         logger.info("Was invoked method for create student");
@@ -87,5 +89,51 @@ public class StudentService {
                 .mapToDouble(Student::getAge).average().orElseThrow();
         //.collect(Collectors.toList());
         return ResponseEntity.ok(studentsAvAge);
+    }
+
+    public List<String> allParallelNames() {
+        List<String> names = studentRepository.findAll().stream()
+                .parallel()
+                .limit(6)
+                .map(Student::getName)
+                .toList();
+        System.out.println(names.get(0) + " " + names.get(1));
+        new Thread(() -> {
+            System.out.println(names.get(2) + " " + names.get(3));
+        }).start();
+        new Thread(() -> {
+            System.out.println(names.get(4) + " " + names.get(5));
+        }).start();
+        return names;
+    }
+
+    public List<String> syncNames() {
+        List<String> syncStudents = studentRepository.findAll().stream()
+                .parallel()
+                .limit(6)
+                .map(Student::getName)
+                .toList();
+
+        sync(syncStudents.get(0));
+        sync(syncStudents.get(1));
+        new Thread(() -> {
+            sync(syncStudents.get(2));
+            sync(syncStudents.get(3));
+        }).start();
+        new Thread(() -> {
+            sync(syncStudents.get(4));
+            sync(syncStudents.get(5));
+        }).start();
+        return syncStudents;
+    }
+
+
+    public static void sync(String name) {
+
+        synchronized (StudentService.class) {
+            System.out.println("student " + name);
+
+        }
+
     }
 }
