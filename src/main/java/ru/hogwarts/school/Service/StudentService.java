@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 @Service
 public class StudentService {
     Logger logger = LoggerFactory.getLogger(StudentService.class);
+    //инжектим репозиторий
     private final StudentRepository studentRepository;
 
     public StudentService(StudentRepository studentRepository) {
