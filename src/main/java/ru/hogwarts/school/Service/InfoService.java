@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 @Service
 public class InfoService {
+    //устанавливаем порт
     @Value("${server.port}")
     String port;
 
@@ -18,6 +19,7 @@ public class InfoService {
         return port;
     }
 
+    //выбираем самый быстрый способ работы
     public List<Long> sumModdif() {
         Logger logger = LoggerFactory.getLogger(InfoService.class);
         long startTime1 = System.currentTimeMillis();

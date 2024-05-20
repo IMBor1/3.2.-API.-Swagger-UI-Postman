@@ -15,32 +15,38 @@ import java.util.stream.Collectors;
 @Service
 public class FacultyService {
     Logger logger = LoggerFactory.getLogger(FacultyService.class);
+    // Инжектим репозиторий
     private final FacultyRepository facultyRepository;
 
     public FacultyService(FacultyRepository facultyRepository) {
         this.facultyRepository = facultyRepository;
     }
 
+    //Создаем факультет
     public Faculty createFaculty(Faculty faculty) {
         logger.info("Was invoked method for create faculty");
         return facultyRepository.save(faculty);
     }
 
+    //Поиск факультета
     public Faculty findFaculty(Long id) {
         logger.info("Was invoked method for find faculty by id");
         return facultyRepository.findById(id).orElseThrow(MyNotFoundException::new);
     }
 
+    //изменить факультет
     public Faculty editFaculty(Faculty faculty) {
         logger.info("Was invoked method for edit faculty");
         return facultyRepository.save(faculty);
     }
 
+    //удалить факультет
     public void removeFaculty(Long id) {
         logger.info("Was invoked method for delete faculty");
         facultyRepository.deleteById(id);
     }
 
+    //список факультетов с одним цветом
     public List<Faculty> listColor(String color) {
         logger.info("Was invoked method for listColor faculty");
         return facultyRepository.findAll().stream()
@@ -48,17 +54,18 @@ public class FacultyService {
                 .collect(Collectors.toList());
     }
 
+    //поиск игнорируя регистр
     public List<Faculty> findByNameIgnoreCaseOrColorIgnoreCase(String name, String color) {
         logger.info("Was invoked method for findByNameIgnoreCaseOrColorIgnoreCase faculty");
         return facultyRepository.findAllByNameIgnoreCaseOrColorIgnoreCase(name, color);
     }
 
+    //максимальная длина факультета
     public ResponseEntity<String> maxLengthFaculty() {
         String maxLength = facultyRepository.findAll().stream()
 
                 .map(Faculty::getName)
                 .max(Comparator.comparingInt(String::length)).orElseThrow();
-        //.collect(Collectors.toList());
         return ResponseEntity.ok(maxLength);
     }
 }

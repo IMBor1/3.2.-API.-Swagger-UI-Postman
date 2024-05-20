@@ -33,6 +33,7 @@ public class AvatarController {
         return ResponseEntity.ok().build();
     }
 
+    //загружаем аватар из базы данных
     @GetMapping(value = "/{id}/avatar-from-db")
     public ResponseEntity<byte[]> downloadAvatarFromDb(@PathVariable Long id) {
         Avatar avatar = avatarService.findAvatar(id);
@@ -42,6 +43,7 @@ public class AvatarController {
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(avatar.getData());
     }
 
+    //загружаем аватар из файла
     @GetMapping(value = "/{id}/avatar-from-file")
     public void downloadAvatarFromFile(@PathVariable Long id,
                                HttpServletResponse response) throws IOException {
@@ -56,6 +58,7 @@ public class AvatarController {
         }
     }
 
+    //все аватары
     @GetMapping("avatar/all")
     ResponseEntity<List<Avatar>> getAvatars(@RequestParam("page") Integer pageNumber,
                                             @RequestParam("size") Integer pageSize) {
